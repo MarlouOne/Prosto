@@ -9,12 +9,9 @@ import os
 
 import PIL.Image as Image
 
-
-
 # Определить функцию сшивания изображений
 def image_compose(IMAGES_PATH, IMAGE_SIZE , IMAGE_COLUMN, IMAGE_ROW, IMAGE_SAVE_PATH,  image_names):
     to_image = Image.new('RGB', (IMAGE_COLUMN * IMAGE_SIZE, IMAGE_ROW * IMAGE_SIZE))  # Создать новую картинку
-    # to_image = Image.new('RGB', (2 * 150, IMAGE_ROW * IMAGE_SIZE))  # Создать новую картинку
     # Прокрутите, вставьте каждое изображение по порядку в соответствующую позицию
     for y in range(1, IMAGE_ROW + 1):
         for x in range(1, IMAGE_COLUMN + 1):
@@ -24,12 +21,7 @@ def image_compose(IMAGES_PATH, IMAGE_SIZE , IMAGE_COLUMN, IMAGE_ROW, IMAGE_SAVE_
     return to_image.save(IMAGE_SAVE_PATH)  # Сохранить новое изображение
 
 def main(IMAGES_PATH, IMAGE_SIZE, IMAGE_COLUMN,  IMAGE_ROW, IMAGE_SAVE_PATH ):
-    # IMAGES_PATH = 'C:\\Users\\major\\Documents\\GitHub\\CopyScript\\Prosto\\Photo_search\\photos\\'  # Адрес коллекции изображений
     IMAGES_FORMAT = ['.jpg', '.JPG','.png']  # Формат изображения
-    # IMAGE_SIZE = 256  # Размер каждой маленькой картинки
-    # IMAGE_ROW = 2  # Интервал картинки, то есть после объединения в одну картинку получается всего несколько строк
-    # IMAGE_COLUMN = 2  # Картинка интервал, то есть после слияния в одну картинку получается всего несколько столбцов
-    # IMAGE_SAVE_PATH = r'C:\Users\major\Documents\GitHub\CopyScript\Prosto\Photo_search\final.jpg'  # Адрес после преобразования изображения
 
     # Получить все имена изображений под адресом коллекции изображений
     image_names = [name for name in os.listdir(IMAGES_PATH) for item in IMAGES_FORMAT if
