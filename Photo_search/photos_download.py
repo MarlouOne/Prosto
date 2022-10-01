@@ -30,7 +30,7 @@ def download_Photos(listURLs, strFolderPath):
     for strURL in listURLs:
         # print(strURL)
         # print(strFolderPath + '\\' + str(intCount) + '.jpg')
-        with open(strFolderPath + '\\' + str(intCount) + '.jpg', 'wb') as file :
+        with open(strFolderPath + '\\' + str(intCount) + '.png', 'wb') as file :
             img = R.get(strURL)
             file.write(img.content)
         intCount += 1

@@ -83,10 +83,8 @@ def create_json_file(dictContent ,strPath = ''):
     except Exception:
         print('No old content')
     
-    
     with open(strPath, "w",encoding='utf-8') as file:
         json.dump(dictContent, file, sort_keys=False, indent=4, ensure_ascii=False, separators=(',', ': '))
-        # json.dump(dictContent, file, indent=4, ensure_ascii=False)
 
 
 def get_randomDict(dictContent):
