@@ -24,13 +24,13 @@ def create_NewFolder(strFolderName = 'data'):
     # print('New folder is created and located at ', strCurrentPath + '\\' + strFolderName)
     return strCurrentPath + '\\' + strFolderName
 
-def download_Photos(listURLs, strFolderPath):
+def download_Photos(listURLs, strFolderPath, strImageType = '.jpg'):
     
     intCount = 1
     for strURL in listURLs:
         # print(strURL)
         # print(strFolderPath + '\\' + str(intCount) + '.jpg')
-        with open(strFolderPath + '\\' + str(intCount) + '.png', 'wb') as file :
+        with open(strFolderPath + '\\' + str(intCount) + strImageType, 'wb') as file :
             img = R.get(strURL)
             file.write(img.content)
         intCount += 1
