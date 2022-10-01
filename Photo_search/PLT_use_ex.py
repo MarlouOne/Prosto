@@ -9,12 +9,12 @@ import os
 
 import PIL.Image as Image
 
-IMAGES_PATH = r'E: \ 000photo \ comic cabin \\'  # Адрес коллекции изображений
+IMAGES_PATH = 'C:\\Users\\major\\Documents\\GitHub\\CopyScript\\Prosto\\Photo_search\\photos\\'  # Адрес коллекции изображений
 IMAGES_FORMAT = ['.jpg', '.JPG']  # Формат изображения
 IMAGE_SIZE = 256  # Размер каждой маленькой картинки
-IMAGE_ROW = 4  # Интервал картинки, то есть после объединения в одну картинку получается всего несколько строк
-IMAGE_COLUMN = 6  # Картинка интервал, то есть после слияния в одну картинку получается всего несколько столбцов
-IMAGE_SAVE_PATH = r'E: \ 000photo \ comic cabin \ final.jpg'  # Адрес после преобразования изображения
+IMAGE_ROW = 2  # Интервал картинки, то есть после объединения в одну картинку получается всего несколько строк
+IMAGE_COLUMN = 2  # Картинка интервал, то есть после слияния в одну картинку получается всего несколько столбцов
+IMAGE_SAVE_PATH = r'C:\Users\major\Documents\GitHub\CopyScript\Prosto\Photo_search\final.jpg'  # Адрес после преобразования изображения
 
 # Получить все имена изображений под адресом коллекции изображений
 image_names = [name for name in os.listdir(IMAGES_PATH) for item in IMAGES_FORMAT if
