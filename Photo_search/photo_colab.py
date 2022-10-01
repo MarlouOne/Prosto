@@ -37,19 +37,54 @@ def get_listOfImage(listContent):
         
 #     return  intMaxWidth, intMaxHeight
 
-def make_imageMask(imageObj):
+# def get_inverseCoordinate(tupleCoordinate, intConvasWidth, intConvasHeight):
+#     for item in 
+
+def make_imageMask(imageObj, intImageCount=3):
     imageObj.show()
     intConvasWidth, intConvasHeight = imageObj.size
     print(intConvasWidth, intConvasHeight)
     convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
     draw = ImageDraw.Draw(convas)
     
-    tupleCoordinate = ( (0, randint(0, intConvasHeight),
-                        (0,intConvasHeight),
-                        (intConvasWidth, intConvasHeight),
-                        (intConvasWidth, randint(0, intConvasHeight)) ))
+    # listFillCalour = ['blue','red', 'yellow', 'green']
+    listFillCalour = ['blue','red', 'yellow', 'green']
     
-    draw.polygon(tupleCoordinate, fill='blue', outline=(0, 0, 0))
+    
+    tupleCoordinate_One = ( (0, 0), # 0 - 0
+                            (0, int(randint(0, intConvasHeight))), # 0 - random Y
+                            (intConvasWidth, int(randint(0, intConvasHeight))), # X -  random Y
+                            (intConvasWidth, 0) ) # X -  Y
+    
+    tupleCoordinate_Two = ( tupleCoordinate_One[1], # 0 - random Y
+                            (0,intConvasHeight), # 0 - Y
+                            (intConvasWidth, intConvasHeight), # X - Y
+                            tupleCoordinate_One[2] ) # X - random Y
+    
+    tupleCoordinate_Three = ( (int(randint(0, intConvasWidth)), 0), # 0 - random Y
+                              (int(randint(0, intConvasWidth)), intConvasHeight), # 0 - Y
+                              (intConvasWidth, intConvasHeight), # random X - Y
+                              (intConvasWidth, 0 )) # 0 - random Y
+    
+    tupleCoordinate_Four = ( (0, 0),  # X - random Y/2
+                             (0, intConvasHeight), # 0 - 0                    
+                             tupleCoordinate_Three[1], # 0 - random Y
+                             tupleCoordinate_Three[0]) # 0 - Y
+
+                        
+    
+    listCoordinateTyples = [tupleCoordinate_One, tupleCoordinate_Two, tupleCoordinate_Three, tupleCoordinate_Four] # Test
+    
+    # listCoordinateTyples = [tupleCoordinate_One, tupleCoordinate_Four]
+    # listCoordinateTyples = [tupleCoordinate_One]
+    # listCoordinateTyples = [((0, 100), (0, 600), (400, 600), (600, 400))]
+    
+    listCoordinateTyples = listCoordinateTyples[:intImageCount] # Test
+    
+    for i in range(len(listCoordinateTyples)):
+        print(listCoordinateTyples[i])
+        draw.polygon(listCoordinateTyples[i], fill=listFillCalour[i], outline=(0, 0, 0))
+        
     convas.show()
     
 
