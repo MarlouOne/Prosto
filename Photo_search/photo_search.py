@@ -5,6 +5,7 @@ from fake_useragent import UserAgent
 # import re
 # import os
 import json
+from random import randint
 
 class photo():
     strName : str
@@ -66,27 +67,40 @@ def get_subtext(strText, strPattern):
     # print(strText[intSecondIndex:intLastIndex])
     return strText[intSecondIndex:intLastIndex]
 
+def get_oldJSONContent(strPath):
+    with open(strPath, "r", encoding='utf-8') as file:
+        dictData = json.load(file)
+        # print(dictData)
+    return dictData
+
+
 
 def create_json_file(dictContent ,strPath = ''):
-    # json_string = json.dumps(dictContent, sort_keys=False, indent=4, ensure_ascii=False, separators=(',', ': '))
-    # print(json_string)
     
-    if strPath == '':
-        with open("photos.json", "w+",encoding='utf-8') as file:
-            # json.dumps(dictContent, file, sort_keys=False, indent=4, ensure_ascii=False, separators=(',', ': '))
-            json.dump(dictContent, file, indent=4, ensure_ascii=False)
-    else:
-        with open(strPath, 'w', encoding='utf-8') as file:
-            json.dump(dictContent, file, indent=4, ensure_ascii=False)
+    try:
+        dictOldData = get_oldJSONContent(strPath)
+        dictContent = dict(list(dictOldData.items()) + list(dictContent.items()))
+    except Exception:
+        print('No old content')
     
+    
+    with open(strPath, "w",encoding='utf-8') as file:
+        json.dump(dictContent, file, sort_keys=False, indent=4, ensure_ascii=False, separators=(',', ': '))
+        # json.dump(dictContent, file, indent=4, ensure_ascii=False)
 
-def main(strText):
+
+def get_randomDict(dictContent):
+    strKeys = list(dictContent)[randint(0,len(list(dictContent)))]
+    return {strKeys:dictContent[strKeys]}
+
+def main(strText, strPath = "photos.json"):
     strText = 'https://yandex.ru/images/search?from=tabbar&text=' + strText
     # print(strText)
 
     listPhotoObjs = get_Photos_objs(strText)
     dictPhotoObjs = dictFromList(listPhotoObjs)
-    create_json_file(dictPhotoObjs)
+    dictPhotoObj = get_randomDict(dictPhotoObjs)
+    create_json_file(dictPhotoObj, strPath)
     
     
 main('олег')
