@@ -29,16 +29,24 @@ def get_listOfImage(listContent, intConvasWidth=100, intConvasHeight=100, intCou
         listImage.append(obj)
     if intCount == 3:
         listImage[2].resize((150,100))
-    elif intCount == 4:
-        listImage[2], listImage[3] = listImage[3], listImage[2]
+    # elif intCount == 4:
+    #     listImage[1], listImage[2], listImage[3] = listImage[3], listImage[1], listImage[1]
     return listImage
 
 def get_ConvasSize(intImageCount = 4):
     # print(intImageCount)
     if intImageCount == 4 or intImageCount == 3: 
-        return 150, 150
+        return 175, 175
     else: 
         return 100, 150
+
+def get_listPhotoCoordinate(intImageCount = 4):
+    if intImageCount == 4 :
+        return [(0,0), (0,75), (75,0), (75,75)]
+    elif intImageCount == 3: 
+        return [(0,0), (75,0), (0,75)]
+    else: 
+        return [(0,0), (75,0)]
 
 def make_imageMask(intImageCount=4):
     intConvasWidth, intConvasHeight = get_ConvasSize(intImageCount)
@@ -46,7 +54,7 @@ def make_imageMask(intImageCount=4):
     # convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
     # draw = ImageDraw.Draw(convas)
     
-    listFillCalour = ['blue','red', 'yellow', 'green']
+    # listFillCalour = ['blue','red', 'yellow', 'green']
     
     
     tupleCoordinate_One = ( (0, 0), # 0 - 0
@@ -82,68 +90,52 @@ def make_imageMask(intImageCount=4):
     # convas.show()
     
     return listCoordinateTyples
-    
-def make_calage(listImages , listCoordinateTyples):
-    # pass
-    intCount = len(listImages)
-    intConvasWidth, intConvasHeight = get_ConvasSize(intCount)
-    
-    back_convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
 
-    image_X, image_Y = 0,0
-    
-    for i in range(intCount):
-        im_size_X, im_size_Y = listImages[i].size
-        imagePart = make_segmentedImage(listImages[i],  image_X, image_Y, listCoordinateTyples[i], intConvasWidth, intConvasHeight)
-        back_convas.paste(imagePart, (image_X, image_Y))
-        back_convas.show()
-        # if  ((image_Y + im_size_Y < intConvasWidth) and image_X == 0) or image_Y == 0:
-        #     image_X += 75
-        # elif (image_Y + im_size_Y > intConvasWidth):
-        #     image_Y = 0
-            
-        # elif ((image_X  + im_size_X < intConvasWidth) and (image_Y == 0)):
-        #     image_Y += 75
-        # else:
-        #     image_X = 0
-        
-        if  ((image_Y + im_size_Y < intConvasWidth) and image_X == 0) or image_Y == 0:
-            if ((image_X  + im_size_X < intConvasWidth) and (image_Y == 0)):
-                image_X += 75
-            else:
-                image_X = 0
-                if ((image_Y + im_size_Y < intConvasWidth) and image_X == 0) or image_Y == 0:
-                    image_Y += 75
-        else: 
-            image_Y = 0
-    back_convas.show()
-        
-    
-    # cat_segmented = Image.composite(img_cat, blank, cat_mask)
+def get_MaskImage(typleCoordinateTyple, intConvasWidth, intConvasHeight):
+    convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
+    draw = ImageDraw.Draw(convas)
+    draw.polygon(typleCoordinateTyple, fill='white', outline=(0, 0, 0))
+    # convas.show()
+    return convas
 
-def make_segmentedImage(image, image_X, image_Y, typlesCoordinateTyples, intConvasWidth, intConvasHeight):
+def get_listMask(listCoordinateTyples):
+    listMaskImages = []
+    intConvasWidth, intConvasHeight = get_ConvasSize(len(listCoordinateTyples))
+    for i in range(len(listCoordinateTyples)):
+        listMaskImages.append(get_MaskImage(listCoordinateTyples[i], intConvasWidth, intConvasHeight))
     
-    mask_convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
-    mask_draw = ImageDraw.Draw(mask_convas)
-    imagesMask = mask_draw.polygon(typlesCoordinateTyples, fill='white', outline=(0, 0, 0))
-    # mask_convas.show()
-    
-    back_convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
-    back_draw = ImageDraw.Draw(back_convas)
-    
-    print(image_X, image_Y)
-    back_convas.paste(image, (image_X, image_Y))
-    # back_convas.show()
-    
-    
-    
-    
-    
-    blank = back_convas.point(lambda _: 0)
-    imageSegment = Image.composite(back_convas, blank, mask_convas)
-    # imageSegment.show()
-    return imageSegment
+    # show_images(listMaskImages)
+    return listMaskImages
 
+def get_cropedMasks(listMaskImages):
+    # show_images(listMaskImages)
+    print(get_ConvasSize())
+    # listPhotoCoordinate = get_listPhotoCoordinate(len(listMaskImages))
+    listMaskImages[0] = listMaskImages[0].crop( (0,0,100,100) )
+    listMaskImages[1] = listMaskImages[1].crop( (75,0,175,100) )
+    listMaskImages[2] = listMaskImages[2].crop( (0,75,100,175) )
+    listMaskImages[3] = listMaskImages[3].crop( (75,75,175,175) )
+    # show_images(listMaskImages)
+    return listMaskImages
+
+def get_calage(listImages, listMaskImages):
+    intConvasWidth, intConvasHeight = get_ConvasSize(len(listImages))
+    listPhotoCoordinate = get_listPhotoCoordinate(len(listImages))
+    
+    convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
+    draw = ImageDraw.Draw(convas)
+    draw.polygon(((0,0),(0,175),(175,175),(175,0)), fill='white', outline=(0, 0, 0))
+    convas.show()
+    # a, b, c = listImages[0], listPhotoCoordinate[0], listMaskImages[0]
+    # convas.paste(listImages[0], listPhotoCoordinate[0],listMaskImages[0])
+    # convas.paste(listImages[1], listPhotoCoordinate[1],listMaskImages[1])
+    # convas.paste(listImages[2], listPhotoCoordinate[2],listMaskImages[2])
+    # convas.paste(listImages[3], listPhotoCoordinate[3],listMaskImages[3])
+    for i in range(len(listImages)):
+        convas.paste(listImages[i], listPhotoCoordinate[i],listMaskImages[i],)
+        convas.show()
+    # convas.show()
+    
 def show_images(listImages):
     for image in listImages:
         image.show()
@@ -164,6 +156,9 @@ def main(strPhotoFolderName = 'photos', intCountImages = 4):
     listImages = get_listOfImage(listFolderContent)
     listCoordinateTyples = make_imageMask(intCountImages)
     # show_images(listImages)
-    make_calage(listImages[:intCountImages], listCoordinateTyples)
+    listMaskImage = get_listMask(listCoordinateTyples)
+    listMaskImage = get_cropedMasks(listMaskImage)
+    # make_calage(listImages[:intCountImages], listCoordinateTyples)
+    get_calage(listImages, listMaskImage)
 
 main()
