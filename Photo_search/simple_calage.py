@@ -9,6 +9,11 @@ import os
 
 import PIL.Image as Image
 
+def remove_files(strPath):
+    
+    os.rmdir(strPath)
+    os.mkdir(strPath)
+    
 # Определить функцию сшивания изображений
 def image_compose(IMAGES_PATH, IMAGE_SIZE , IMAGE_COLUMN, IMAGE_ROW, IMAGE_SAVE_PATH,  image_names):
     to_image = Image.new('RGB', (IMAGE_COLUMN * IMAGE_SIZE, IMAGE_ROW * IMAGE_SIZE))  # Создать новую картинку
@@ -31,8 +36,9 @@ def main(IMAGES_PATH, IMAGE_SIZE, IMAGE_COLUMN,  IMAGE_ROW, IMAGE_SAVE_PATH ):
     # Простая количественная оценка настройки параметров и размера фактической коллекции изображений
     if len(image_names) != IMAGE_ROW * IMAGE_COLUMN:
         raise ValueError("Параметры составного изображения не могут соответствовать необходимому количеству!")
-
+        
 
     image_compose(IMAGES_PATH, IMAGE_SIZE,  IMAGE_ROW, IMAGE_COLUMN, IMAGE_SAVE_PATH, image_names)  # Функции вызова
+    remove_files(IMAGES_PATH)
     
-main(r'C:\Users\major\Documents\GitHub\CopyScript\Prosto\Photo_search\photos\\', 150, 2, 2, 'final_calage.jpg')
+main(r'photos\\', 150, 2, 2, 'final_calage.jpg')

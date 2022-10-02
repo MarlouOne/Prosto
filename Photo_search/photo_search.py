@@ -97,8 +97,9 @@ def main(strText, strPath = "photos.json"):
 
     listPhotoObjs = get_Photos_objs(strText)
     dictPhotoObjs = dictFromList(listPhotoObjs)
-    dictPhotoObj = get_randomDict(dictPhotoObjs)
-    create_json_file(dictPhotoObj, strPath)
+    # dictPhotoObj = get_randomDict(dictPhotoObjs)
+    # create_json_file(dictPhotoObj, strPath)
+    create_json_file(dictPhotoObjs, strPath)
     
     
-main('олег')
+# main('олег')

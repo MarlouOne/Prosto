@@ -161,4 +161,4 @@ def main(strPhotoFolderName = 'photos', intCountImages = 4):
     # make_calage(listImages[:intCountImages], listCoordinateTyples)
     get_calage(listImages, listMaskImage)
 
-main()
+# main()

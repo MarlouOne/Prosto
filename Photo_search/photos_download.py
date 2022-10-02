@@ -41,4 +41,4 @@ def main(strJSONPath = 'photos.json', strFolderName = 'photos'):
     download_Photos(dictPhotos.values(), strFolderPath)
     
     
-main()
+# main()
