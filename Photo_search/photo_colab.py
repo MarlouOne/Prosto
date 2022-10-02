@@ -13,41 +13,39 @@ from PIL import Image, ImageEnhance, ImageDraw
 def get_listFolderContent(strFolderName):
     strFolderPath = os.getcwd()
     strFolderPath += '\\' + strFolderName
-    print(strFolderPath)
+    # print(strFolderPath)
     listFolderContent = []
     for filename in os.listdir(strFolderPath):
         listFolderContent.append(strFolderPath + '\\' + filename)
     
-    print(listFolderContent)
+    # print(listFolderContent)
     return listFolderContent
 
-def get_listOfImage(listContent):
+def get_listOfImage(listContent, intConvasWidth=100, intConvasHeight=100, intCount = 4):
     listImage = []
     for item in listContent:
-        listImage.append(Image.open(item).convert("RGBA"))
+        obj = Image.open(item).convert("RGBA")
+        obj = obj.resize((intConvasWidth,intConvasHeight))
+        listImage.append(obj)
+    if intCount == 3:
+        listImage[2].resize((150,100))
+    elif intCount == 4:
+        listImage[2], listImage[3] = listImage[3], listImage[2]
     return listImage
 
-# def get_convasSize(listContent):
-#     intImageCount = len(listContent)
-#     intMaxWidth  = 0
-#     intMaxHeight = 0
-#     for image in listContent:
-#         intMaxWidth = max(image.size[0],intMaxWidth)
-#         intMaxHeight = max(image.size[1],intMaxHeight)
-        
-#     return  intMaxWidth, intMaxHeight
+def get_ConvasSize(intImageCount = 4):
+    # print(intImageCount)
+    if intImageCount == 4 or intImageCount == 3: 
+        return 150, 150
+    else: 
+        return 100, 150
 
-# def get_inverseCoordinate(tupleCoordinate, intConvasWidth, intConvasHeight):
-#     for item in 
-
-def make_imageMask(imageObj, intImageCount=3):
-    imageObj.show()
-    intConvasWidth, intConvasHeight = imageObj.size
+def make_imageMask(intImageCount=4):
+    intConvasWidth, intConvasHeight = get_ConvasSize(intImageCount)
     print(intConvasWidth, intConvasHeight)
-    convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
-    draw = ImageDraw.Draw(convas)
+    # convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
+    # draw = ImageDraw.Draw(convas)
     
-    # listFillCalour = ['blue','red', 'yellow', 'green']
     listFillCalour = ['blue','red', 'yellow', 'green']
     
     
@@ -75,18 +73,80 @@ def make_imageMask(imageObj, intImageCount=3):
     
     listCoordinateTyples = [tupleCoordinate_One, tupleCoordinate_Two, tupleCoordinate_Three, tupleCoordinate_Four] # Test
     
-    # listCoordinateTyples = [tupleCoordinate_One, tupleCoordinate_Four]
-    # listCoordinateTyples = [tupleCoordinate_One]
-    # listCoordinateTyples = [((0, 100), (0, 600), (400, 600), (600, 400))]
-    
     listCoordinateTyples = listCoordinateTyples[:intImageCount] # Test
     
-    for i in range(len(listCoordinateTyples)):
-        print(listCoordinateTyples[i])
-        draw.polygon(listCoordinateTyples[i], fill=listFillCalour[i], outline=(0, 0, 0))
+    # for i in range(len(listCoordinateTyples)):
+    #     # print(listCoordinateTyples[i])
+    #     draw.polygon(listCoordinateTyples[i], fill=listFillCalour[i], outline=(0, 0, 0))
         
-    convas.show()
+    # convas.show()
     
+    return listCoordinateTyples
+    
+def make_calage(listImages , listCoordinateTyples):
+    # pass
+    intCount = len(listImages)
+    intConvasWidth, intConvasHeight = get_ConvasSize(intCount)
+    
+    back_convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
+
+    image_X, image_Y = 0,0
+    
+    for i in range(intCount):
+        im_size_X, im_size_Y = listImages[i].size
+        imagePart = make_segmentedImage(listImages[i],  image_X, image_Y, listCoordinateTyples[i], intConvasWidth, intConvasHeight)
+        back_convas.paste(imagePart, (image_X, image_Y))
+        back_convas.show()
+        # if  ((image_Y + im_size_Y < intConvasWidth) and image_X == 0) or image_Y == 0:
+        #     image_X += 75
+        # elif (image_Y + im_size_Y > intConvasWidth):
+        #     image_Y = 0
+            
+        # elif ((image_X  + im_size_X < intConvasWidth) and (image_Y == 0)):
+        #     image_Y += 75
+        # else:
+        #     image_X = 0
+        
+        if  ((image_Y + im_size_Y < intConvasWidth) and image_X == 0) or image_Y == 0:
+            if ((image_X  + im_size_X < intConvasWidth) and (image_Y == 0)):
+                image_X += 75
+            else:
+                image_X = 0
+                if ((image_Y + im_size_Y < intConvasWidth) and image_X == 0) or image_Y == 0:
+                    image_Y += 75
+        else: 
+            image_Y = 0
+    back_convas.show()
+        
+    
+    # cat_segmented = Image.composite(img_cat, blank, cat_mask)
+
+def make_segmentedImage(image, image_X, image_Y, typlesCoordinateTyples, intConvasWidth, intConvasHeight):
+    
+    mask_convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
+    mask_draw = ImageDraw.Draw(mask_convas)
+    imagesMask = mask_draw.polygon(typlesCoordinateTyples, fill='white', outline=(0, 0, 0))
+    # mask_convas.show()
+    
+    back_convas = Image.new('RGBA', (intConvasWidth, intConvasHeight))
+    back_draw = ImageDraw.Draw(back_convas)
+    
+    print(image_X, image_Y)
+    back_convas.paste(image, (image_X, image_Y))
+    # back_convas.show()
+    
+    
+    
+    
+    
+    blank = back_convas.point(lambda _: 0)
+    imageSegment = Image.composite(back_convas, blank, mask_convas)
+    # imageSegment.show()
+    return imageSegment
+
+def show_images(listImages):
+    for image in listImages:
+        image.show()
 
 class listBuffer():
     listBuffer = []
@@ -99,9 +159,11 @@ class listBuffer():
         self.listBuffer.pop(-1)
         return buffer
 
-def main(strPhotoFolderName = 'photos', ):
+def main(strPhotoFolderName = 'photos', intCountImages = 4):
     listFolderContent = get_listFolderContent(strPhotoFolderName)
-    listImage = get_listOfImage(listFolderContent)
-    make_imageMask(listImage[0])
+    listImages = get_listOfImage(listFolderContent)
+    listCoordinateTyples = make_imageMask(intCountImages)
+    # show_images(listImages)
+    make_calage(listImages[:intCountImages], listCoordinateTyples)
 
 main()
